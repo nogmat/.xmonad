@@ -1,0 +1,36 @@
+
+xmonad.hs:96:18: warning: [-Wdeprecations]
+    In the use of ‘defaultGSConfig’
+    (imported from XMonad.Actions.GridSelect):
+    Deprecated: "Use def (from Data.Default, and re-exported from XMonad.Actions.GridSelect) instead."
+   |
+96 |     where conf = defaultGSConfig
+   |                  ^^^^^^^^^^^^^^^
+
+xmonad.hs:141:63: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+    |
+141 | tall       = renamed [Replace "Tall"]     $ limitWindows 12 $ spacing 6 $ ResizableTall 1 (3/100) (1/2) []
+    |                                                               ^^^^^^^
+
+xmonad.hs:142:63: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+    |
+142 | tall_0     = renamed [Replace "Tall0"]    $ limitWindows 12 $ spacing 0 $ ResizableTall 1 (3/100) (1/2) []
+    |                                                               ^^^^^^^
+
+xmonad.hs:143:63: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+    |
+143 | grid       = renamed [Replace "Grid"]     $ limitWindows 12 $ spacing 6 $ mkToggle (single MIRROR) $ Grid (16/10)
+    |                                                               ^^^^^^^
+
+xmonad.hs:148:63: warning: [-Wdeprecations]
+    In the use of ‘spacing’ (imported from XMonad.Layout.Spacing):
+    Deprecated: "Use spacingRaw instead."
+    |
+148 | space      = renamed [Replace "Space"]    $ limitWindows 4  $ spacing 12 $ Mirror $ mkToggle (single MIRROR) $ mkToggle (single REFLECTX) $ mkToggle (single REFLECTY) $ OneBig (2/3) (2/3)
+    |                                                               ^^^^^^^
