@@ -1,6 +1,6 @@
 import XMonad
 
-
+import XMonad.Actions.CopyWindow
 import XMonad.Actions.CycleWS
 import XMonad.Actions.CycleWindows
 import XMonad.Actions.GridSelect
@@ -10,10 +10,6 @@ import XMonad.Config.Desktop
 
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-
-import XMonad.Util.EZConfig
-import XMonad.Util.Run
-import XMonad.Util.SpawnOnce
 
 import XMonad.Layout.LimitWindows
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), Toggle(..), (??))
@@ -25,10 +21,9 @@ import XMonad.Layout.Renamed (renamed, Rename(CutWordsLeft, Replace))
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spacing
+import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
 import XMonad.Layout.WindowArranger
 import XMonad.Layout.WorkspaceDir
-import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
-
 
     -- Layouts
 import XMonad.Layout.GridVariants (Grid(Grid))
@@ -39,6 +34,9 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.ZoomRow (zoomRow, zoomIn, zoomOut, zoomReset, ZoomMessage(ZoomFullToggle))
 import XMonad.Layout.IM (withIM, Property(Role))
 
+import XMonad.Util.EZConfig
+import XMonad.Util.Run
+import XMonad.Util.SpawnOnce
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map as M
@@ -59,7 +57,8 @@ main = do
     , focusedBorderColor = "#800000"
     , modMask = mod4Mask
     , workspaces = myWorkspaces
-      } `additionalKeysP` myKeys
+      }
+    `additionalKeysP` myKeysP
   
 -- Command to launch the bar.
 myBar = "xmobar ~/.xmobar/xmobar.hs --recompile"
@@ -67,13 +66,14 @@ myBar = "xmobar ~/.xmobar/xmobar.hs --recompile"
 
 -- Autostartup
 myStartupHook = do
-  spawnOnce "xbindkeys &"
-  spawnOnce "/usr/bin/numlockx on &"
-  spawnOnce "nitrogen --restore &"
-  spawnOnce "xset r rate 500 40 &"
-  spawnOnce "pactl set-sink-volume @DEFAULT_SINK@ 0% &"
-  spawnOnce "pactl set-sink-mute @DEFAULT_SINK@ 0 &"
-  spawnOnce "picom &"
+  spawnOnce "xbacklight -set 20 "
+  -- spawnOnce "xbindkeys &"
+  spawnOnce "/usr/bin/numlockx on "
+  spawnOnce "nitrogen --restore "
+  spawnOnce "xset r rate 500 40 "
+  spawnOnce "pactl set-sink-volume @DEFAULT_SINK@ 0% "
+  spawnOnce "pactl set-sink-mute @DEFAULT_SINK@ 0 "
+  spawnOnce "picom "
 
 -- Terminal
 -- myTerminal = "alacritty"
@@ -92,8 +92,9 @@ myBorderWidth = 2
 -- -- Key binding to toggle the gap for the bar.
 -- toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 spawnSelected' :: [(String, String)] -> X ()
-spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
-    where conf = defaultGSConfig
+-- spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
+--     where conf = defaultGSConfig
+spawnSelected' lst = gridselect defaultGSConfig lst >>= flip whenJust spawn
 
 
 
@@ -111,24 +112,37 @@ spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
 --   , ((mod4Mask, xK_space), spawn "compiz-boxmenu")
 --   , ((mod4Mask .|. shiftMask, xK_space), sendMessage NextLayout)
 --   ]
-myKeys =
-  [ ("M1-C-<Left>", prevWS)
-  , ("M1-C-<Right>", nextWS)
-  , ("M1-C-r", spawn "xmonad --restart")
+
+myKeysP =
+  [ ("M-c", kill)
+  , ("M-f", spawn "firefox")
+  , ("M-j", shiftToPrev >> prevWS)
+  , ("M-k", shiftToNext >> nextWS)
   , ("M-l", spawn "physlock")
   , ("M-<Left>", windows W.focusUp)
-  , ("M-<Right>", windows W.focusDown)
-  , ("M-j", shiftToPrev)
-  , ("M-k", shiftToNext)
-  , ("M-c", kill)
-  , ("M-f", spawn "firefox")
   , ("M-<Return>", spawn "emacs")
+  , ("M-<Right>", windows W.focusDown)
   , ("M-<Space>", spawn "compiz-boxmenu")
   , ("M-<Tab>", sendMessage NextLayout)
+  , ("M-C-c", windows $ copyToAll)
+  , ("M-S-e", spawn "emacs")
+  , ("M-S-f", spawn "firefox")
+  , ("M-S-m", spawn "thunderbird")
+  , ("M-S-p", spawn "firefox --private-window")
+  , ("M-S-t", spawn "gnome-terminal")
+  , ("M-S-v", spawn "virtualbox")
+  , ("M1-C-<Left>", prevWS)
+  , ("M1-C-<Right>", nextWS)
+  , ("M1-C-r", spawn "xmonad --restart")
   , ("M1-C-!", spawnSelected'
-    [ ("HDMI on", "~/.screenlayout/layout1.sh")
+    [ ("HDMI on", "~/.screenlayout/layout1.sh && nitrogen --restore")
     , ("HDMI off", "xrandr --output HDMI1 --off")
     ])
+  , ("<XF86AudioMute>", spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle")
+  , ("<XF86AudioLowerVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ -10%")
+  , ("<XF86AudioRaiseVolume>", spawn "pactl set-sink-volume @DEFAULT_SINK@ +10%")
+  , ("<XF86MonBrightnessUp>", spawn "xbacklight -inc 10")
+  , ("<XF86MonBrightnessDown>", spawn "xbacklight -dec 10")
   ]
 
 
